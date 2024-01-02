@@ -59,6 +59,9 @@ window.onload = () => {
   update();   
   setInterval(placePipes, 1700);
   document.addEventListener("keydown", moveBird);
+  document.addEventListener("touchstart" , ()=>{
+      velocityY = -6;
+  });
 };
 
 function update() {
