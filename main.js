@@ -56,26 +56,32 @@ window.onload = () => {
   bottomPipeImg = new Image();
   bottomPipeImg.src = "./bottompipe.png";
 
-  update();   
+  initializeHighScores();  //Initialize high score
+  // console.log("High Score" ,highScore);
+  
+  update();     
   setInterval(placePipes, 1700);
   document.addEventListener("keydown", moveBird);
   document.addEventListener("touchstart" , ()=>{
-      velocityY = -6;
+    velocityY = -6;
   });
 };
 
 function update() {
   requestAnimationFrame(update);
+  setHighScore(score); // Call setHighScore with the player's score
+  let highScore = getHighScore();
   if (gameOver) {
     c.clearRect(0, 0, canvas.width, canvas.height);
     c.fillStyle = "white";
     c.font = "35px sans-serif";
-    c.fillText("GAME OVER", width / 5, height / 2);
+    c.fillText("GAME OVER", width / 5, height / 2.5);
 
     // Display score
     c.fillStyle = "white";
     c.font = "40px sans-serif";
-    c.fillText("Score: " + score, width / 4, height / 1.8);
+    c.fillText("Score: " + score, width / 4, height / 2.1);
+    c.fillText("Best Score: " + highScore ,width/6 ,height/1.8);
 
     // Display confirmation dialog
     if (choice === undefined) {
@@ -131,17 +137,43 @@ function update() {
 
   //Score
   c.fillStyle = "white";
-  c.font = "45px sans-serif"
-  c.fillText(score,5 ,45);
+  c.font = "35px sans-serif"
+  c.fillText(score,5 ,35);
+  c.font = "30px sans-serif"
+  c.fillText("Best Score : " +highScore , 100,35);
 
   if(gameOver){
-    c.fillStyle = "red";
+    c.fillStyle = "white";
     c.font = "35px sans-serif";
     c.fillText("GAME OVER" , width/5, height/2);
   }
 
 }
 
+// Initialize high scores if not present
+function initializeHighScores() {
+  if (!localStorage.getItem('highScores')) {
+    localStorage.setItem('highScores', JSON.stringify([0]));
+  }
+}
+
+// Set a new high score
+function setHighScore(newScore) {
+  // Get the existing high scores from local storage
+  const highScores = JSON.parse(localStorage.getItem('highScores'));
+
+  // Update the high scores if the new score is greater than the current high score
+  if (newScore > highScores[0]) {
+    highScores[0] = newScore;
+    localStorage.setItem('highScores', JSON.stringify(highScores));
+  }
+}
+
+// Get the current high score from local storage
+function getHighScore() {
+  const highScores = JSON.parse(localStorage.getItem('highScores'));
+  return highScores ? highScores[0] : 0;
+}
 
 
 function placePipes() {
